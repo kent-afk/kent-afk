@@ -1,16 +1,32 @@
-## Hi there 👋
+# Hi, I'm Alex 👋
 
-<!--
-**kent-afk/kent-afk** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Software Engineer based in St. Petersburg, Russia, Open to Relocation.
 
-Here are some ideas to get you started:
+I am a results-oriented developer focused on building reliable backend and desktop applications. I advocate for **Clean Architecture**, performance optimization, and long-term maintainability.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 🛠 Tech Stack
+
+- **Languages:** C# (.NET 8+), C++(QT), T-SQL.
+- **Backend:** ASP.NET Core Web API, Entity Framework Core (EF Core), RESTful API Design.
+- **Databases:** PostgreSQL, MS SQL Server (Design & Optimization).
+- **DevOps & Tools:** Docker, CI/CD (GitHub Actions), Git.
+- **Testing:** Unit Testing (xUnit, Moq).
+- **AI & Productivity:** AI-assisted development (Claude code, Gemini, Perplexity)
+  
+## 🏗 Architecture & Philosophy
+
+I specialize in implementing complex business logic using modern architectural patterns:
+- **Domain-Driven Design (DDD):** Modeling core business logic with Aggregates, Entities, and Value Objects.
+- **Clean Architecture:** Expert in **Onion** and **Hexagonal** patterns to ensure system decoupling.
+- **Principles:** Strict adherence to **SOLID, GRASP, KISS, DRY**.
+  
+## Focus
+- Backend development
+- Database design and optimization
+- Clean architecture and maintainable systems
+
+## Education
+**ITMO University**
+*Ranked #7 among Best Russian Universities by Forbes (2025)*
+- *B.S. Computer Science*
+- *Relevant Coursework: Algorithms & Data Structures, DBMS, Operating Systems, Software Design.*
