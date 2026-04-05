@@ -28,5 +28,5 @@ I specialize in implementing complex business logic using modern architectural p
 ## Education
 **ITMO University**
 *Ranked #7 among Best Russian Universities by Forbes (2025)*
-- *B.S. Computer Science*
+- *B.S. Software Engineering*
 - *Relevant Coursework: Algorithms & Data Structures, DBMS, Operating Systems, Software Design.*
