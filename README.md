@@ -6,9 +6,9 @@ I am a results-oriented developer focused on building reliable backend and deskt
 
 ## 🛠 Tech Stack
 
-- **Languages:** C# (.NET 8+), C++(QT), T-SQL.
+- **Languages:** C# (.NET 8+), C++(QT), SQL.
 - **Backend:** ASP.NET Core Web API, Entity Framework Core (EF Core), RESTful API Design.
-- **Databases:** PostgreSQL, MS SQL Server (Design & Optimization).
+- **DBMS:** PostgreSQL, MS SQL Server.
 - **DevOps & Tools:** Docker, CI/CD (GitHub Actions), Git.
 - **Testing:** Unit Testing (xUnit, Moq).
 - **AI & Productivity:** AI-assisted development (opencode, Gemini, Perplexity,)
@@ -29,3 +29,6 @@ I specialize in implementing complex business logic using modern architectural p
 **ITMO University**
 - *B.S. Software Engineering*
 - *Relevant Coursework: Algorithms & Data Structures, DBMS, Operating Systems, Software Design.*
+
+## Links
+[LinkedIn](https://www.linkedin.com/in/alexander-korenchuk-93a1353bb/)
