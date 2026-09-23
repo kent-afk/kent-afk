@@ -11,7 +11,7 @@ I am a results-oriented developer focused on building reliable backend and deskt
 - **Databases:** PostgreSQL, MS SQL Server (Design & Optimization).
 - **DevOps & Tools:** Docker, CI/CD (GitHub Actions), Git.
 - **Testing:** Unit Testing (xUnit, Moq).
-- **AI & Productivity:** AI-assisted development (Claude code, Gemini, Perplexity)
+- **AI & Productivity:** AI-assisted development (opencode, Gemini, Perplexity,)
   
 ## 🏗 Architecture & Philosophy
 
@@ -27,6 +27,5 @@ I specialize in implementing complex business logic using modern architectural p
 
 ## Education
 **ITMO University**
-*Ranked #7 among Best Russian Universities by Forbes (2025)*
 - *B.S. Software Engineering*
 - *Relevant Coursework: Algorithms & Data Structures, DBMS, Operating Systems, Software Design.*
