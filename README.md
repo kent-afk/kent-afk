@@ -31,4 +31,4 @@ I specialize in implementing complex business logic using modern architectural p
 - *Relevant Coursework: Algorithms & Data Structures, DBMS, Operating Systems, Software Design.*
 
 ## Links
-[LinkedIn](https://www.linkedin.com/in/alexander-korenchuk-93a1353bb/)
+[LinkedIn](https://www.linkedin.com/in/alexander-korenchuk-93a1353bb/) | [Portfolio Site](https://kent-afk.github.io/portfolio-site/)
