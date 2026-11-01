@@ -1,5 +1,41 @@
 {
   "repos": {
+    "Keppchik/Bot": {
+      "additions": 0,
+      "commits": 0,
+      "deletions": 0,
+      "pushed_at": "2025-04-04T17:21:41Z"
+    },
+    "ai-in-sd-y29/m3220-Korenchuk": {
+      "additions": 4796,
+      "commits": 1,
+      "deletions": 0,
+      "pushed_at": "2026-10-28T04:09:09Z"
+    },
+    "deqstare/labwork3-deqstare": {
+      "additions": 106,
+      "commits": 1,
+      "deletions": 0,
+      "pushed_at": "2024-10-27T17:58:32Z"
+    },
+    "is-itmo-c-24/labwork1-kent-afk": {
+      "additions": 0,
+      "commits": 0,
+      "deletions": 0,
+      "pushed_at": "2024-09-21T21:19:28Z"
+    },
+    "is-oop-y28/kent-afk": {
+      "additions": 0,
+      "commits": 0,
+      "deletions": 0,
+      "pushed_at": "2025-10-11T21:09:36Z"
+    },
+    "is-oop-y29-hassle-free/m3220-korenchuk": {
+      "additions": 2336,
+      "commits": 9,
+      "deletions": 637,
+      "pushed_at": "2026-10-31T14:23:05Z"
+    },
     "kent-afk/Corporate-Message-Distribution-System": {
       "additions": 2239,
       "commits": 3,
@@ -61,10 +97,10 @@
       "pushed_at": "2025-09-16T18:12:34Z"
     },
     "kent-afk/kent-afk": {
-      "additions": 740,
-      "commits": 7,
-      "deletions": 53,
-      "pushed_at": "2026-11-01T05:37:57Z"
+      "additions": 863,
+      "commits": 8,
+      "deletions": 102,
+      "pushed_at": "2026-11-01T06:09:28Z"
     },
     "kent-afk/kent-afk.github.io": {
       "additions": 2,
@@ -119,6 +155,60 @@
       "commits": 1,
       "deletions": 0,
       "pushed_at": "2026-10-28T03:42:42Z"
+    },
+    "se-c-cpp-prog/se-c-prog-expression-kent-afk": {
+      "additions": 472,
+      "commits": 1,
+      "deletions": 0,
+      "pushed_at": "2024-12-10T16:03:49Z"
+    },
+    "se-c-cpp-prog/se-c-prog-invertible-matrix-kent-afk": {
+      "additions": 1085,
+      "commits": 47,
+      "deletions": 817,
+      "pushed_at": "2024-11-21T19:19:54Z"
+    },
+    "se-c-cpp-prog/se-c-prog-png-kent-afk": {
+      "additions": 0,
+      "commits": 0,
+      "deletions": 0,
+      "pushed_at": "2024-12-15T07:58:50Z"
+    },
+    "se-c-cpp-prog/se-c-prog-sprintf-kent-afk": {
+      "additions": 578,
+      "commits": 5,
+      "deletions": 89,
+      "pushed_at": "2024-12-04T19:20:13Z"
+    },
+    "se-c-cpp-prog/se-c-prog-sum-kent-afk": {
+      "additions": 0,
+      "commits": 0,
+      "deletions": 0,
+      "pushed_at": "2024-11-18T11:41:29Z"
+    },
+    "se-c-cpp-prog/se-cpp-prog-minesweeper-kent-afk": {
+      "additions": 1679,
+      "commits": 9,
+      "deletions": 161,
+      "pushed_at": "2025-05-18T16:42:42Z"
+    },
+    "se-c-cpp-prog/se-cpp-prog-ndarray-kent-afk": {
+      "additions": 0,
+      "commits": 0,
+      "deletions": 0,
+      "pushed_at": "2025-09-29T02:12:14Z"
+    },
+    "se-c-cpp-prog/se-cpp-prog-quat-kent-afk": {
+      "additions": 655,
+      "commits": 19,
+      "deletions": 206,
+      "pushed_at": "2025-09-09T16:02:04Z"
+    },
+    "se-c-cpp-prog/se-cpp-prog-subtitles-kent-afk": {
+      "additions": 2276,
+      "commits": 5,
+      "deletions": 66,
+      "pushed_at": "2025-04-22T19:40:00Z"
     }
   },
   "user": "kent-afk"
