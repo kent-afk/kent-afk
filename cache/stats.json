@@ -6,6 +6,12 @@
       "deletions": 329,
       "pushed_at": "2026-03-30T07:02:28Z"
     },
+    "kent-afk/Enterprise-Message-Distribution-System": {
+      "additions": 1,
+      "commits": 1,
+      "deletions": 0,
+      "pushed_at": "2026-03-30T06:54:30Z"
+    },
     "kent-afk/Fantasy-creature-battle-simulator": {
       "additions": 0,
       "commits": 0,
@@ -48,17 +54,41 @@
       "deletions": 0,
       "pushed_at": "2025-09-16T18:24:50Z"
     },
+    "kent-afk/is-oop": {
+      "additions": 1325,
+      "commits": 1,
+      "deletions": 0,
+      "pushed_at": "2025-09-16T18:12:34Z"
+    },
     "kent-afk/kent-afk": {
-      "additions": 53,
-      "commits": 6,
-      "deletions": 19,
-      "pushed_at": "2026-11-01T03:06:55Z"
+      "additions": 740,
+      "commits": 7,
+      "deletions": 53,
+      "pushed_at": "2026-11-01T05:37:57Z"
+    },
+    "kent-afk/kent-afk.github.io": {
+      "additions": 2,
+      "commits": 2,
+      "deletions": 0,
+      "pushed_at": "2026-09-09T15:37:56Z"
     },
     "kent-afk/motion-tracktion": {
       "additions": 137,
       "commits": 3,
       "deletions": 3,
       "pushed_at": "2025-10-09T13:27:32Z"
+    },
+    "kent-afk/own": {
+      "additions": 77,
+      "commits": 2,
+      "deletions": 2,
+      "pushed_at": "2024-11-16T21:18:06Z"
+    },
+    "kent-afk/personal_site_profile": {
+      "additions": 7046,
+      "commits": 4,
+      "deletions": 0,
+      "pushed_at": "2026-10-13T04:13:11Z"
     },
     "kent-afk/portfolio-site": {
       "additions": 28446,
@@ -83,6 +113,12 @@
       "commits": 1,
       "deletions": 0,
       "pushed_at": "2025-04-09T18:07:55Z"
+    },
+    "kent-afk/vps-llm-python-bot": {
+      "additions": 4796,
+      "commits": 1,
+      "deletions": 0,
+      "pushed_at": "2026-10-28T03:42:42Z"
     }
   },
   "user": "kent-afk"
