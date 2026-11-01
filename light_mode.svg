@@ -16,7 +16,7 @@
   .add { fill: #1a7f37; }
   .del { fill: #cf222e; }
   .cc { fill: #6e7781; }
-  .art { fill: #cf222e; }
+  .art { fill: #000000; }
   .rule { stroke: #d0d7de; stroke-width: 1; }
   .caption_name { fill: #953800; }
   .caption_sub { fill: #57606a; }
