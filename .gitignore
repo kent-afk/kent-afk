@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+cache/stats.json.tmp
+
+# Local-only SVG generator (not needed by the daily stats workflow)
+make_svg.py
+portrait.txt
