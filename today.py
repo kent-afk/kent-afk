@@ -6,12 +6,15 @@ elements with known IDs, so it is safe to run from GitHub Actions once a day.
 
 It uses the public REST API:
   * GET /users/{user}                                  -> followers
-  * GET /users/{user}/repos or /user/repos             -> repositories, stars
+  * GET /user/repos or /users/{user}/repos             -> repositories, stars
   * GET /repos/{owner}/{repo}/stats/contributors       -> commits, additions, deletions
 
-Set ACCESS_TOKEN to a fine-grained PAT with read-only Contents + Metadata to
-raise the rate limit and include private repositories. If it is absent, the
-script falls back to GITHUB_TOKEN, and finally to anonymous requests.
+ACCESS_TOKEN is the personal token (fine-grained, read-only Contents +
+Metadata) used for the user's own repositories, including private ones.
+CONTRIBUTED_TOKEN is an optional second token used to see repositories owned
+by organisations or other collaborators. It can be a classic PAT with the
+`repo` scope, or a fine-grained token for that organisation. If ACCESS_TOKEN
+is absent the script falls back to GITHUB_TOKEN and then to public data.
 """
 from __future__ import annotations
 
@@ -44,13 +47,22 @@ BRANCH_OVERRIDES = {
 
 USER_NAME = os.environ.get("USER_NAME", DEFAULT_USER).strip() or DEFAULT_USER
 TOKEN = (os.environ.get("ACCESS_TOKEN") or os.environ.get("GITHUB_TOKEN") or "").strip()
-HEADERS = {
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-    "User-Agent": f"{USER_NAME}-profile-readme",
-}
-if TOKEN:
-    HEADERS["Authorization"] = f"Bearer {TOKEN}"
+EXTRA_TOKEN = (os.environ.get("CONTRIBUTED_TOKEN") or "").strip()
+
+
+def make_headers(token: str | None = None) -> dict[str, str]:
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": f"{USER_NAME}-profile-readme",
+    }
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
+HEADERS = make_headers(TOKEN)
+EXTRA_HEADERS = make_headers(EXTRA_TOKEN) if EXTRA_TOKEN else HEADERS
 
 
 def fail(message: str) -> NoReturn:
@@ -66,12 +78,19 @@ def rate_limit_message(response: requests.Response) -> str:
     return "GitHub rate limit exhausted"
 
 
-def api_get(path: str, *, params: dict[str, Any] | None = None, timeout: int = 30) -> requests.Response:
+def api_get(
+    path: str,
+    *,
+    params: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
+    timeout: int = 30,
+) -> requests.Response:
     url = path if path.startswith("http") else f"{API}{path}"
+    request_headers = headers or HEADERS
     response: requests.Response | None = None
     for attempt in range(4):
         try:
-            response = requests.get(url, headers=HEADERS, params=params, timeout=timeout)
+            response = requests.get(url, headers=request_headers, params=params, timeout=timeout)
         except requests.RequestException as exc:
             if attempt == 3:
                 fail(f"request to {url} failed: {exc}")
@@ -83,7 +102,7 @@ def api_get(path: str, *, params: dict[str, Any] | None = None, timeout: int = 3
         break
     assert response is not None
     if response.status_code == 401:
-        fail("GitHub rejected the token (401). Check ACCESS_TOKEN, or remove it to use anonymous requests")
+        fail("GitHub rejected a token (401). Check ACCESS_TOKEN and CONTRIBUTED_TOKEN")
     if response.status_code == 403 and response.headers.get("X-RateLimit-Remaining") == "0":
         fail(rate_limit_message(response))
     return response
@@ -98,14 +117,18 @@ def api_json(response: requests.Response, what: str) -> Any:
         fail(f"{what} returned invalid JSON")
 
 
-def get_pages(path: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+def get_pages(
+    path: str,
+    params: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
+) -> list[dict[str, Any]]:
     """Read every page of a list endpoint (100 items per page)."""
     items: list[dict[str, Any]] = []
     page = 1
     while True:
         query = dict(params or {})
         query.update({"per_page": 100, "page": page})
-        response = api_get(path, params=query)
+        response = api_get(path, params=query, headers=headers)
         chunk = api_json(response, path)
         if not isinstance(chunk, list):
             fail(f"{path} did not return a list")
@@ -117,38 +140,60 @@ def get_pages(path: str, params: dict[str, Any] | None = None) -> list[dict[str,
             fail(f"{path} has too many pages")
 
 
-def token_login() -> str | None:
+def token_login(headers: dict[str, str] | None = None) -> str | None:
     """Return the login that owns the token, or None for anonymous access."""
-    if not TOKEN:
+    request_headers = headers or HEADERS
+    if "Authorization" not in request_headers:
         return None
-    response = api_get("/user")
+    response = api_get("/user", headers=request_headers)
     if response.status_code == 200:
         return response.json().get("login")
     return None
 
 
-def fetch_repositories(username: str) -> tuple[list[dict[str, Any]], bool]:
-    """Return (repositories, all_affiliations).
-
-    A personal token sees owned, collaborator and organisation repositories.
-    A bot token or anonymous request only sees the user's public repositories.
-    """
-    login = token_login()
+def fetch_personal_repositories(
+    username: str, headers: dict[str, str]
+) -> list[dict[str, Any]]:
+    """Repositories owned by the user, including private ones when authorised."""
+    login = token_login(headers)
     if login and login.lower() == username.lower():
         repos = get_pages(
             "/user/repos",
-            {
-                "affiliation": "owner,collaborator,organization_member",
-                "sort": "pushed",
-                "direction": "desc",
-            },
+            {"affiliation": "owner", "sort": "pushed", "direction": "desc"},
+            headers=headers,
         )
-        return repos, True
+    else:
+        repos = get_pages(
+            f"/users/{username}/repos",
+            {"type": "owner", "sort": "pushed", "direction": "desc"},
+            headers=headers,
+        )
+    return [
+        repo
+        for repo in repos
+        if (repo.get("owner") or {}).get("login", "").lower() == username.lower()
+    ]
+
+
+def fetch_extra_repositories(
+    username: str, headers: dict[str, str], known: set[str]
+) -> list[dict[str, Any]]:
+    """Repositories visible to the second token but not in the personal list."""
+    if "Authorization" not in headers:
+        return []
+    login = token_login(headers)
+    if not login:
+        return []
     repos = get_pages(
-        f"/users/{username}/repos",
-        {"type": "owner", "sort": "pushed", "direction": "desc"},
+        "/user/repos",
+        {
+            "affiliation": "owner,collaborator,organization_member",
+            "sort": "pushed",
+            "direction": "desc",
+        },
+        headers=headers,
     )
-    return repos, False
+    return [repo for repo in repos if repo.get("full_name") not in known]
 
 
 def format_uptime(birthday: str | None = None) -> str:
@@ -166,7 +211,9 @@ def format_uptime(birthday: str | None = None) -> str:
     return ", ".join(parts)
 
 
-def contributor_stats(full_name: str) -> dict[str, int] | None:
+def contributor_stats(
+    full_name: str, headers: dict[str, str] | None = None
+) -> dict[str, int] | None:
     """Return this user's commits/additions/deletions in a repository.
 
     GitHub computes contributor statistics lazily: the first request returns
@@ -174,7 +221,9 @@ def contributor_stats(full_name: str) -> dict[str, int] | None:
     the repository is empty.
     """
     for attempt in range(7):
-        response = api_get(f"/repos/{full_name}/stats/contributors", timeout=45)
+        response = api_get(
+            f"/repos/{full_name}/stats/contributors", headers=headers, timeout=45
+        )
         if response.status_code == 202:
             time.sleep(1.5 + attempt)
             continue
@@ -205,7 +254,10 @@ def contributor_stats(full_name: str) -> dict[str, int] | None:
 
 
 def commit_stats_fallback(
-    full_name: str, ref: str | None = None, max_commits: int = 100
+    full_name: str,
+    ref: str | None = None,
+    max_commits: int = 100,
+    headers: dict[str, str] | None = None,
 ) -> dict[str, int] | None:
     """Sum the per-commit diff stats for repositories where the stats API lags.
 
@@ -216,7 +268,7 @@ def commit_stats_fallback(
     params: dict[str, Any] = {"author": USER_NAME, "per_page": max_commits}
     if ref:
         params["sha"] = ref
-    response = api_get(f"/repos/{full_name}/commits", params=params)
+    response = api_get(f"/repos/{full_name}/commits", params=params, headers=headers)
     commits = api_json(response, f"commits for {full_name}")
     if not isinstance(commits, list) or not commits:
         return None
@@ -227,7 +279,7 @@ def commit_stats_fallback(
         sha = commit.get("sha")
         if not sha:
             continue
-        detail = api_get(f"/repos/{full_name}/commits/{sha}")
+        detail = api_get(f"/repos/{full_name}/commits/{sha}", headers=headers)
         if detail.status_code == 404:
             continue
         data = api_json(detail, f"commit {sha} in {full_name}")
@@ -255,13 +307,19 @@ def save_cache(cache: dict[str, Any]) -> None:
     tmp.replace(CACHE_FILE)
 
 
-def collect_stats(repos: list[dict[str, Any]], cache: dict[str, Any], force: bool) -> dict[str, dict[str, Any]]:
+def collect_stats(
+    repos: list[dict[str, Any]],
+    cache: dict[str, Any],
+    force: bool,
+    repo_headers: dict[str, dict[str, str]] | None = None,
+) -> dict[str, dict[str, Any]]:
     cached_repos = cache.get("repos", {})
     current: dict[str, dict[str, Any]] = {}
 
     for index, repo in enumerate(repos, 1):
         full_name = repo["full_name"]
         pushed_at = repo.get("pushed_at") or ""
+        headers = (repo_headers or {}).get(full_name, HEADERS)
         cached = cached_repos.get(full_name)
         if (
             not force
@@ -288,7 +346,7 @@ def collect_stats(repos: list[dict[str, Any]], cache: dict[str, Any], force: boo
             print(f"  [{index:>2}/{len(repos)}] empty  {full_name}")
         else:
             try:
-                result = contributor_stats(full_name)
+                result = contributor_stats(full_name, headers=headers)
             except RuntimeError as exc:
                 print(f"  [{index:>2}/{len(repos)}] pending {full_name}: {exc}")
                 continue
@@ -314,7 +372,9 @@ def collect_stats(repos: list[dict[str, Any]], cache: dict[str, Any], force: boo
                     and int(repo.get("size") or 0) > 0
                 ):
                     ref = BRANCH_OVERRIDES.get(full_name.split("/", 1)[-1])
-                    detailed = commit_stats_fallback(full_name, ref=ref)
+                    detailed = commit_stats_fallback(
+                        full_name, ref=ref, headers=headers
+                    )
                     if detailed is not None:
                         branch = f" [{ref}]" if ref else ""
                         print(
@@ -384,6 +444,7 @@ def main() -> None:
 
     USER_NAME = args.user.strip() or USER_NAME
     HEADERS["User-Agent"] = f"{USER_NAME}-profile-readme"
+    EXTRA_HEADERS["User-Agent"] = f"{USER_NAME}-profile-readme"
 
     if args.fixture:
         values = fixture_values(args.fixture)
@@ -393,13 +454,22 @@ def main() -> None:
         write_svgs(values, args.svg_dir, args.dry_run)
         return
 
-    user = api_json(api_get(f"/users/{USER_NAME}"), "user")
-    repos, all_affiliations = fetch_repositories(USER_NAME)
-    owned = [repo for repo in repos if (repo.get("owner") or {}).get("login", "").lower() == USER_NAME.lower()]
+    user = api_json(api_get(f"/users/{USER_NAME}", headers=HEADERS), "user")
+    personal = fetch_personal_repositories(USER_NAME, HEADERS)
+    personal_names = {repo["full_name"] for repo in personal}
+    extra_headers = EXTRA_HEADERS if EXTRA_TOKEN else HEADERS
+    extra = fetch_extra_repositories(USER_NAME, extra_headers, personal_names)
+    repos = personal + extra
+    repo_headers = {repo["full_name"]: HEADERS for repo in personal}
+    repo_headers.update({repo["full_name"]: extra_headers for repo in extra})
+    owned = personal
 
     cache = load_cache()
-    print(f"Repository stats for {USER_NAME} ({len(repos)} accessible, {len(owned)} owned):")
-    repo_stats = collect_stats(repos, cache, args.force)
+    print(
+        f"Repository stats for {USER_NAME} "
+        f"({len(repos)} accessible, {len(owned)} owned):"
+    )
+    repo_stats = collect_stats(repos, cache, args.force, repo_headers)
     save_cache(cache)
 
     commits = sum(item["commits"] for item in repo_stats.values())
@@ -407,7 +477,7 @@ def main() -> None:
     deletions = sum(item["deletions"] for item in repo_stats.values())
     stars = sum(int(repo.get("stargazers_count") or 0) for repo in owned)
     followers = int((user.get("followers") or 0))
-    contributed = len(repos) if all_affiliations else len(owned)
+    contributed = len(repos)
 
     values = {
         "uptime": format_uptime(),

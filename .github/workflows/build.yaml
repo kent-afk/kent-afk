@@ -34,7 +34,11 @@ jobs:
       - name: Update profile SVGs
         env:
           USER_NAME: kent-afk
+          # Personal token: owned repositories, including private ones.
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          # Optional second token for organisation/collaborator repositories.
+          # Classic PAT with `repo`, or a fine-grained token for that org.
+          CONTRIBUTED_TOKEN: ${{ secrets.CONTRIBUTED_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python today.py
 
