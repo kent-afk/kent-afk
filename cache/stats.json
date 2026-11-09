@@ -100,13 +100,19 @@
       "additions": 867,
       "commits": 10,
       "deletions": 106,
-      "pushed_at": "2026-11-07T11:03:52Z"
+      "pushed_at": "2026-11-08T11:16:34Z"
     },
     "kent-afk/kent-afk.github.io": {
       "additions": 2,
       "commits": 2,
       "deletions": 0,
       "pushed_at": "2026-09-09T15:37:56Z"
+    },
+    "kent-afk/lan-sync-password-manager": {
+      "additions": 8066,
+      "commits": 3,
+      "deletions": 43,
+      "pushed_at": "2026-11-09T11:12:05Z"
     },
     "kent-afk/motion-tracktion": {
       "additions": 137,
